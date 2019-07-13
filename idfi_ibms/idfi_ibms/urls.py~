@@ -1,0 +1,41 @@
+"""tutorial URL Configuration
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/1.11/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.conf.urls import url, include
+    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
+"""
+from django.conf.urls import include, url
+from django.contrib import admin
+from django.views.decorators.csrf import csrf_exempt
+
+from accounts.views import Login, Logout
+from accounts.v1.user_profile import NickNameValidation, UserProfileDetails, UserProfileList, ChangePassword
+from accounts.v1.signup import Signup
+from accounts.v1.forget_password import ForgetPassword, PasswordResetViaOTP
+
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    url(r'^v1/login/$', csrf_exempt(Login)),
+    url(r'^v1/logout/$', csrf_exempt(Logout.as_view())),
+    url(r'^v1/nick-name/availability/$', csrf_exempt(NickNameValidation.as_view())),
+    url(r'^v1/signup/$', csrf_exempt(Signup.as_view())),
+
+    # user profile update
+    url(r'^v1/profile/$', csrf_exempt(UserProfileDetails.as_view())),
+    url(r'^v1/user-list/$', csrf_exempt(UserProfileList.as_view())),
+    url(r'^v1/change-password/$', csrf_exempt(ChangePassword.as_view())),
+
+    # Forget Password
+    url(r'^v1/forget/password/$', csrf_exempt(ForgetPassword.as_view())),
+    url(r'^v1/set/password/$', csrf_exempt(PasswordResetViaOTP)),
+]
